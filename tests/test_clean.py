@@ -343,23 +343,6 @@ class TestTypeCoercionCustom:
         result = clean(df, cfg)
         assert "." not in result["ts"].iloc[0]
 
-    def test_datestring_invalid_value_raises(self, base_cfg):
-        df = pd.DataFrame(
-            {"col1": ["2024-01-01"], "col2": ["2023-03-01"],
-             "col3": ["not-a-date"]}
-        )
-        with pytest.raises(ValueError, match="col3"):
-            clean(df, base_cfg)
-
-    def test_8601_invalid_value_raises(self):
-        df = pd.DataFrame({"ts": ["not-a-timestamp"]})
-        cfg = {
-            "version": 1.0, "include-unmatched-columns": False,
-            "columns": [{"ts": {"type": "8601"}}],
-        }
-        with pytest.raises(ValueError, match="ts"):
-            clean(df, cfg)
-
 
 # ---------------------------------------------------------------------------
 # 7. Type coercion — pandas-native types
@@ -434,13 +417,33 @@ class TestTypeCoercionPandas:
         result = clean(df, cfg)
         assert list(result["col1"]) == ["hello", "world"]
 
-    def test_datetime_with_null_values(self, base_cfg):
+    def test_datetime_with_null_values(self):
         df = pd.DataFrame(
-            {"col1": ["2024-01-01", None], "col2": ["2023-03-01", "2023-07-20"],
-             "col3": ["2022-11-05", "2022-08-19"]}
+            {
+             "col1": ["2024-01-01", None],
+             "col2": ["2024-01-01", None],
+             "col3": ["2024-01-01", None]}
         )
-        result = clean(df, base_cfg)
-        assert pd.isna(result["col1-new"].iloc[1])
+        cfg = {
+            "columns": [{"col1": {"type": "datetime"}}],
+        }
+        result = clean(df, cfg)
+        assert pd.isna(result["col1"].iloc[1])
+
+    @pytest.mark.parametrize("datetype", ["8601", "datetime", "datetimestring", "datestring"])
+    def test_timetypes_with_blanks(self,datetype):
+        df = pd.DataFrame(
+            {
+             "col1": ["2024-01-01", None,'', ' ']}
+        )
+        cfg = {
+            "columns": [{"col1": {"type": datetype}}],
+        }
+        result = clean(df, cfg)
+        assert pd.isna(result["col1"].iloc[1])
+        assert pd.isna(result["col1"].iloc[2])
+        assert pd.isna(result["col1"].iloc[3])
+
 
 
 # ---------------------------------------------------------------------------

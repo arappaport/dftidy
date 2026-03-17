@@ -66,7 +66,7 @@ def _get_columns_to_remove(df_config: Dict[str, Any]) -> List[str]:
         df_config: Configuration dictionary for DataFrame cleaning.
 
     Returns:
-        A list of column names to remove. May be empty.
+        A list of column names to remove. May be empty list.
 
     Raises:
         TypeError: If the 'remove' value is not a list of strings.

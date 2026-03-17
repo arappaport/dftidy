@@ -247,7 +247,7 @@ def _coerce_series_type(
     # ------------------------------------------------------------------
     if normalised == "datestring":
         try:
-            return pd.to_datetime(series, format="mixed").dt.strftime("%Y-%m-%d")
+            return pd.to_datetime(series, format="mixed",errors="coerce").dt.strftime("%Y-%m-%d")
         except Exception as exc:
             raise ValueError(
                 f"Column '{col_name}': datestring conversion failed — {exc}"
@@ -255,7 +255,7 @@ def _coerce_series_type(
 
     if normalised == "datetimestring":
         try:
-            return pd.to_datetime(series, format="mixed").dt.strftime("%Y%m%d-%H%M%S")
+            return pd.to_datetime(series, format="mixed",errors="coerce").dt.strftime("%Y%m%d-%H%M%S")
         except Exception as exc:
             raise ValueError(
                 f"Column '{col_name}': datestring conversion failed — {exc}"
@@ -263,7 +263,7 @@ def _coerce_series_type(
 
     if normalised == "8601":
         try:
-            dt = pd.to_datetime(series, format="mixed")
+            dt = pd.to_datetime(series, format="mixed",errors="coerce")
             # Strip sub-second precision and timezone offset for clean ISO strings
             return dt.dt.floor("s").dt.strftime("%Y-%m-%dT%H:%M:%S")
         except Exception as exc:
@@ -278,7 +278,7 @@ def _coerce_series_type(
 
     if pandas_dtype.startswith("datetime"):
         try:
-            return pd.to_datetime(series, format="mixed")
+            return pd.to_datetime(series, format="mixed", errors="coerce")
         except Exception as exc:
             raise ValueError(
                 f"Column '{col_name}': datetime conversion failed — {exc}"
