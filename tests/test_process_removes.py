@@ -22,7 +22,7 @@ from __future__ import annotations
 import pytest
 import pandas as pd
 
-from dfclean.process_removes import (
+from dftidy.process_removes import (
     _validate_dataframe,
     _validate_df_config,
     _validate_inplace,

@@ -43,30 +43,30 @@ _TEST_DEPS = [
 def lint(session: nox.Session) -> None:
     """Lint and format-check with ruff (read-only; fails on any violation)."""
     session.install("ruff")
-    session.run("ruff", "check", "dfclean", "tests", "noxfile.py")
-    session.run("ruff", "format", "--check", "dfclean", "tests", "noxfile.py")
+    session.run("ruff", "check", "dftidy", "tests", "noxfile.py")
+    session.run("ruff", "format", "--check", "dftidy", "tests", "noxfile.py")
 
 
 @nox.session(python="3.13", reuse_venv=True)
 def format(session: nox.Session) -> None:
     """Auto-format and fix lint violations in-place with ruff."""
     session.install("ruff")
-    session.run("ruff", "format", "dfclean", "tests", "noxfile.py")
-    session.run("ruff", "check", "--fix", "dfclean", "tests", "noxfile.py")
+    session.run("ruff", "format", "dftidy", "tests", "noxfile.py")
+    session.run("ruff", "check", "--fix", "dftidy", "tests", "noxfile.py")
 
 
 @nox.session(python="3.13", reuse_venv=True)
 def typecheck(session: nox.Session) -> None:
     """Run mypy --strict over the package source."""
     session.install("mypy", "pandas-stubs", "click", *_RUNTIME_DEPS)
-    session.run("mypy", "dfclean", "--strict")
+    session.run("mypy", "dftidy", "--strict")
 
 
 @nox.session(python=PYTHON_VERSIONS)
 def tests(session: nox.Session) -> None:
     """Run pytest with branch coverage across the Python version matrix."""
     session.install(*_TEST_DEPS)
-    # Install the package in editable mode so `import dfclean` resolves correctly.
+    # Install the package in editable mode so `import dftidy` resolves correctly.
     session.install("-e", ".", "--no-deps")
     # Extra args forwarded from CLI: nox -s tests-3.13 -- -k test_stats -v
     session.run("pytest", *session.posargs)
@@ -91,11 +91,11 @@ def ci(session: nox.Session) -> None:
     Sessions cannot call each other in Nox, so logic is inlined here.
     """
     session.install("ruff")
-    session.run("ruff", "check", "dfclean", "tests")
-    session.run("ruff", "format", "--check", "dfclean", "tests")
+    session.run("ruff", "check", "dftidy", "tests")
+    session.run("ruff", "format", "--check", "dftidy", "tests")
 
     session.install("mypy", "pandas-stubs", "click", *_RUNTIME_DEPS)
-    session.run("mypy", "dfclean", "--strict")
+    session.run("mypy", "dftidy", "--strict")
 
     session.install(*_TEST_DEPS)
     session.install("-e", ".", "--no-deps")

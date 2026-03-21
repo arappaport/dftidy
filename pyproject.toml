@@ -1,15 +1,14 @@
 [tool.poetry]
-name = "dfclean"
+name = "dftidy"
 version = "0.1.2"
-description = "A production-quality DataFrame cleaning and statistics library with a Click CLI."
-# TODO: replace author name and email before publishing
+description = "Prepare a dataframe for ananlysis by renaming, removing and reordering columns"
 authors = ["Andy Rappaport andy@rappaport.name"]
 license = "Unlicense"
 readme = "README.md"
-homepage = "https://github.com/yourorg/dfclean"
-repository = "https://github.com/yourorg/dfclean"
-documentation = "https://github.com/yourorg/dfclean#readme"
-keywords = ["dataframe", "cleaning", "pandas", "cli", "dfclean"]
+homepage = "https://github.com/arappaport/dftidy"
+repository = "https://github.com/arappaport/dftidy"
+documentation = "https://github.com/arappaport/dftidy#readme"
+keywords = ["dataframe", "tidying", "pandas", "cli", "dftidy"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
@@ -22,7 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-packages = [{ include = "dfclean" }]
+packages = [{ include = "dftidy" }]
 
 # ---------------------------------------------------------------------------
 # Runtime — installed for every consumer of the library.
@@ -51,7 +50,7 @@ tomli        = { version = "^2.0", python = "<3.11" }
 # CLI entry point — only available after `poetry install --with dev`
 # because click is dev-only. Library-only installs cannot run this command.
 [tool.poetry.scripts]
-dfclean = "dfclean.cli:main"
+dftidy = "dftidy.cli:main"
 
 # ---------------------------------------------------------------------------
 # ruff — linting + formatting in one tool.
@@ -67,7 +66,7 @@ select = ["E", "W", "F", "I", "UP", "B", "C4", "ANN"]
 ignore = ["ANN101", "ANN102"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["dfclean"]
+known-first-party = ["dftidy"]
 
 [tool.ruff.lint.per-file-ignores]
 # pytest injects fixtures by name; ANN adds noise without value in test files.
@@ -86,12 +85,12 @@ ignore_missing_imports = false
 # pytest — 80% branch-coverage floor; --tb=short keeps CI output scannable.
 # ---------------------------------------------------------------------------
 [tool.pytest.ini_options]
-addopts   = "--cov=dfclean --cov-report=term-missing --cov-fail-under=82 --tb=short"
+addopts   = "--cov=dftidy --cov-report=term-missing --cov-fail-under=82 --tb=short"
 testpaths = ["tests"]
 
 [tool.coverage.run]
 branch = true
-source = ["dfclean"]
+source = ["dftidy"]
 omit   = ["tests/*", "noxfile.py"]
 
 [tool.coverage.report]

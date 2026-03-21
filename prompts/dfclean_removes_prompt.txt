@@ -1,5 +1,5 @@
 # Parameters:
-prompt_name = "dfclean_remove.txt"
+prompt_name = "dftidy_remove.txt"
 version = "1.0"
 target_function_name: "process_removes"
 
@@ -8,7 +8,7 @@ Write a production-grade Python function named {{target_function_name}} that acc
 1. a pandas dataframe named df.  It should not be empty.
 2. a dict named df_config. It should not be empty. It should have the a key named remove
 3. a bool inplace.    standard dataframe behavior. if True modifies existing df. If False process a copy. Defaults to False
-3. return a dataframe named df_clean. that contains results after cleaning.
+3. return a dataframe named df_tidy. that contains results after tidying.
 
 
 
@@ -29,7 +29,7 @@ The function must follow current Python best practices, including:
 - A docstring formatted with Google-style conventions
 - Input validation: raise `TypeError` if inputs do not match type hints
 - Clear and descriptive variable names
-- PEP 8 formatting and clean structure
+- PEP 8 formatting and tidy structure
 - Ready for inclusion in a larger codebase or module
 - break up functionality into smaller modules
 - Ensure that all required parameters are present and are of the correct python type

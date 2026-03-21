@@ -43,7 +43,7 @@ def zero_variance_df() -> pd.DataFrame:
 def tmp_csv(tmp_path: pytest.TempPathFactory, sample_df: pd.DataFrame) -> str:
     """Write sample_df to a temporary CSV file; return its path as str.
 
-    Uses pytest's built-in tmp_path fixture for automatic cleanup —
+    Uses pytest's built-in tmp_path fixture for automatic tidyup —
     no teardown logic required here.
     """
     path = tmp_path / "sample.csv"

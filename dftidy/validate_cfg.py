@@ -3,7 +3,7 @@
 # See UNLICENSE or <https://unlicense.org> for details.
 
 """
-Validation utilities for dfclean configuration dictionaries.
+Validation utilities for dftidy configuration dictionaries.
 """
 
 from typing import Any, Dict, List, Optional
@@ -34,10 +34,10 @@ def _validate_columns(value: Any) -> Optional[str]:
 
 
 def validate_cfg(colcfg: Dict[str, Any]) -> Optional[str]:
-    """Validate a dfclean configuration dictionary.
+    """Validate a dftidy configuration dictionary.
 
     Args:
-        colcfg: A dictionary representing dfclean configuration.
+        colcfg: A dictionary representing dftidy configuration.
 
     Returns:
         None if the configuration is valid, otherwise a string describing the error.

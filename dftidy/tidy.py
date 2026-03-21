@@ -4,9 +4,9 @@
 
 # GENERATED FILE - DO NOT EDIT DIRECTLY. Prompt:[cdftidy.txt] version:[1.0] at[2026-03-01T23:49:22Z]
 """
-clean.py
+tidy.py
 --------
-Production-grade DataFrame cleaning function driven by a dftidy YAML samples.
+Production-grade DataFrame tidying function driven by a dftidy YAML samples.
 
 Supported samples syntax version: 1.0
 
@@ -246,7 +246,7 @@ def _coerce_series_type(
     if normalised == "8601":
         try:
             dt = pd.to_datetime(series, format="mixed",errors="coerce")
-            # Strip sub-second precision and timezone offset for clean ISO strings
+            # Strip sub-second precision and timezone offset for tidy ISO strings
             return dt.dt.floor("s").dt.strftime("%Y-%m-%dT%H:%M:%S")
         except Exception as exc:
             raise ValueError(
@@ -286,12 +286,12 @@ def _coerce_series_type(
 # Public API
 # ---------------------------------------------------------------------------
 
-def clean(
+def tidy(
     df: pd.DataFrame,
     cfg: dict,
     inplace: bool = False,
 ) -> Optional[pd.DataFrame]:
-    """Clean and validate a pandas DataFrame using a dftidy YAML samples.
+    """Tidy and validate a pandas DataFrame using a dftidy YAML samples.
 
     Operations performed in order:
 
@@ -310,14 +310,14 @@ def clean(
     8. Drops or retains unmatched columns per ``include-unmatched-columns``.
 
     Args:
-        df: Source pandas DataFrame to clean.
+        df: Source pandas DataFrame to tidy.
         cfg: Python dict produced by ``yaml.safe_load()`` on a dftidy
             samples file.
         inplace: If ``True``, mutate *df* in place and return ``None``.
             If ``False`` (default), operate on a copy and return it.
 
     Returns:
-        Cleaned ``pd.DataFrame`` when ``inplace=False``, or ``None`` when
+        Tidied ``pd.DataFrame`` when ``inplace=False``, or ``None`` when
         ``inplace=True``.
 
     Raises:
@@ -330,7 +330,7 @@ def clean(
     Example::
 
         import yaml, pandas as pd
-        from clean import clean
+        from tidy import tidy
 
         cfg = yaml.safe_load(open("sample.yaml"))
         df  = pd.DataFrame({
@@ -338,7 +338,7 @@ def clean(
             "col2": ["2023-06-15"],
             "col3": ["2022-03-10"],
         })
-        result = clean(df, cfg)
+        result = tidy(df, cfg)
         # result has columns: col1-new (datetime64), col2-new (datetime64),
         #                      col3-new (YYYY-MM-DD string)
     """

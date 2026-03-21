@@ -1,8 +1,8 @@
-#dfclean samples syntax version
+#dftidy samples syntax version
 version: 1.0
 
-#if false (the default), only dataframe columns in the columns list are included in the cleaned dataframe.
-# if true, all columns from original dataframe are left in the cleaned dataframe without any changes to content.
+#if false (the default), only dataframe columns in the columns list are included in the tidied dataframe.
+# if true, all columns from original dataframe are left in the tidied dataframe without any changes to content.
 include-unmatched-columns: false
 
 # if 'lower', or 'upper' forces all column names to a consistent case.

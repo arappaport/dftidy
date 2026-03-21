@@ -1,8 +1,9 @@
+
 # SPDX-License-Identifier: Unlicense
 # This is free and unencumbered software released into the public domain.
 # See UNLICENSE or <https://unlicense.org> for details.
 
-"""Click CLI for dfclean.
+"""Click CLI for dftidy.
 
 click is a dev dependency — this module must never be imported by library
 consumers or included in import paths that don't require the CLI.
@@ -21,7 +22,7 @@ import click
 import pandas as pd
 
 try:
-    _VERSION = importlib.metadata.version("dfclean")
+    _VERSION = importlib.metadata.version("dftidy")
 except importlib.metadata.PackageNotFoundError:
     # Running from source without installation — sentinel signals non-release.
     _VERSION = "0.0.0.dev"
@@ -36,9 +37,9 @@ def _render_stats(stats: dict[str, dict[str, float]]) -> None:
 
 
 @click.group()
-@click.version_option(version=_VERSION, prog_name="dfclean")
+@click.version_option(version=_VERSION, prog_name="dftidy")
 def main() -> None:
-    """dfclean — DataFrame cleaning and statistics CLI."""
+    """dftidy — DataFrame tidying and statistics CLI."""
 
 
 @main.command("stats")

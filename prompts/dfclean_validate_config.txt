@@ -1,11 +1,11 @@
 # Parameters:
-prompt_name = "dfclean_load_config.txt"
+prompt_name = "dftidy_load_config.txt"
 version = "1.0"
 target_function_name: "validate_config"
 
 
-Write a production-grade Python function named {{target_function_name}} that will safely validate a dfclean formatted dict.
-1. a dict named colcfg.  This is a dfclean formatted dict.
+Write a production-grade Python function named {{target_function_name}} that will safely validate a dftidy formatted dict.
+1. a dict named colcfg.  This is a dftidy formatted dict.
 
 It returns None if colcfg is valid or a str error message if not.
 
@@ -29,7 +29,7 @@ The function must follow current Python best practices, including:
 - A docstring formatted with Google-style conventions
 - Input validation: raise `TypeError` if inputs do not match type hints
 - Clear and descriptive variable names
-- PEP 8 formatting and clean structure
+- PEP 8 formatting and tidy structure
 - Ready for inclusion in a larger codebase or module
 - #break up functionality into smaller modules
 - Ensure that all required parameters are present and are of the correct python type

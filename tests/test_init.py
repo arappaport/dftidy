@@ -2,7 +2,7 @@
 # This is free and unencumbered software released into the public domain.
 # See UNLICENSE or <https://unlicense.org> for details.
 
-"""Verify the public API surface declared in dfclean/__init__.py.
+"""Verify the public API surface declared in dftidy/__init__.py.
 
 Guards against two regression classes:
   1. A symbol is present in __all__ but no longer importable (broken re-export).
@@ -15,21 +15,21 @@ import re
 import sys
 from pathlib import Path
 
-import dfclean
+import dftidy
 
 
 class TestPublicAPI:
     """__all__ exports must be importable; __version__ must stay in sync."""
 
     def test_all_exports_are_importable(self) -> None:
-        for name in dfclean.__all__:
-            assert hasattr(dfclean, name), (
-                f"'{name}' is listed in __all__ but is not importable from dfclean"
+        for name in dftidy.__all__:
+            assert hasattr(dftidy, name), (
+                f"'{name}' is listed in __all__ but is not importable from dftidy"
             )
 
     def test_version_is_semver(self) -> None:
-        assert re.fullmatch(r"\d+\.\d+\.\d+", dfclean.__version__), (
-            f"__version__ '{dfclean.__version__}' does not match MAJOR.MINOR.PATCH"
+        assert re.fullmatch(r"\d+\.\d+\.\d+", dftidy.__version__), (
+            f"__version__ '{dftidy.__version__}' does not match MAJOR.MINOR.PATCH"
         )
 
     def test_version_matches_pyproject(self) -> None:
@@ -44,7 +44,7 @@ class TestPublicAPI:
             data = tomllib.load(fh)
 
         toml_version: str = data["tool"]["poetry"]["version"]
-        assert dfclean.__version__ == toml_version, (
-            f"dfclean.__version__ ({dfclean.__version__!r}) != "
+        assert dftidy.__version__ == toml_version, (
+            f"dftidy.__version__ ({dftidy.__version__!r}) != "
             f"pyproject.toml version ({toml_version!r})"
         )

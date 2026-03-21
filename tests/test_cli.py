@@ -18,7 +18,7 @@ import re
 import pytest
 from click.testing import CliRunner
 
-from dfclean.cli import main
+from dftidy.cli import main
 
 
 @pytest.fixture()

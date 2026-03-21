@@ -13,7 +13,7 @@ Function contract:
 Bugs documented as tests:
   - path.stat().st_size() called as a method — st_size is a property (int),
     calling it raises TypeError. A valid, non-empty file always hits this bug.
-    The size check is therefore never reached cleanly.
+    The size check is therefore never reached tidyly.
 
 Test strategy:
   - All filesystem interactions use tmp_path (real files, no mocking)
@@ -28,7 +28,7 @@ from pathlib import Path
 
 import pytest
 
-from dfclean import check_file
+from dftidy import check_file
 
 # ---------------------------------------------------------------------------
 # Module under test — inline so the file is self-contained for the exercise.

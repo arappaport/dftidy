@@ -3,9 +3,9 @@
 # See UNLICENSE or <https://unlicense.org> for details.
 
 """
-test_clean.py
+run_dftidy.py
 -------------
-Comprehensive pytest suite for ``clean()`` in ``tidy.py``.
+Comprehensive pytest suite for ``tidy()`` in ``tidy.py``.
 
 Test classes:
   TestInputTypeValidation       — TypeError on bad argument types
@@ -65,7 +65,7 @@ def base_cfg() -> dict:
 
 
 class TestInputTypeValidation:
-    """clean() must raise TypeError when arguments have wrong types."""
+    """tidy() must raise TypeError when arguments have wrong types."""
 
     def test_df_dict_raises(self, base_cfg):
         with pytest.raises(TypeError, match="'df' must be a pandas DataFrame"):

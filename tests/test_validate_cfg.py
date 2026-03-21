@@ -16,7 +16,7 @@ Known behavioural quirks documented as tests (not bugs to fix here):
 """
 
 import pytest
-from dfclean.validate_cfg import validate_cfg
+from dftidy.validate_cfg import validate_cfg
 
 
 # ---------------------------------------------------------------------------

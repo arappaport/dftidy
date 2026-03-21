@@ -1,19 +1,19 @@
-# dfclean
+# dftidy
 
-[![CI](https://github.com/yourorg/dfclean/actions/workflows/ci.yml/badge.svg)](https://github.com/yourorg/dfclean/actions)
+[![CI](https://github.com/yourorg/dftidy/actions/workflows/ci.yml/badge.svg)](https://github.com/yourorg/dftidy/actions)
 [![Python](https://img.shields.io/badge/python-3.11%20|%203.12%20|%203.13-blue)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](UNLICENSE)
 [![Coverage](https://img.shields.io/badge/coverage-≅82%25-brightgreen)](htmlcov/index.html)
-[![PyPI](https://img.shields.io/pypi/v/dfclean)](https://pypi.org/project/dfclean/)
+[![PyPI](https://img.shields.io/pypi/v/dftidy)](https://pypi.org/project/dftidy/)
 
 ---
 
 ## Overview
 
-`dfclean` is a simple set of utilities to prepare and clean a pandas DataFrame.   
+`dftidy` is a simple set of utilities to prepare and tidy a pandas DataFrame.   
 I tend to do the same things for every DateFrame - this DRY's up the processing. 
 
-dfclean.clean() is driven from an external configuration file.    See ./samples/config_sample.yaml for notes and example. 
+dftidy.tidy() is driven from an external configuration file.    See ./samples/config_sample.yaml for notes and example. 
 
 It supports: 
  * Verify mandatory columns
@@ -44,8 +44,8 @@ It supports:
 ## Installation
 
 ```bash
-git clone https://github.com/arappaport/dfclean.git
-cd dfclean
+git clone https://github.com/arappaport/dftidy.git
+cd dftidy
 
 # Install runtime + all dev dependencies (includes click for the CLI)
 poetry install --with dev
@@ -59,7 +59,7 @@ pre-commit install
 
 > **Library-only install** (no CLI, no click):
 > ```bash
-> pip install dfclean
+> pip install dftidy
 > ```
 > Only `pandas` is required. `click` is never installed.
 
@@ -67,14 +67,14 @@ pre-commit install
 
 ## CLI usage
 
-The `dfclean` command is available after `poetry install --with dev`.
+The `dftidy` command is available after `poetry install --with dev`.
 
 ### Help
 
 ```bash
-dfclean --help
-dfclean stats    --help
-dfclean pipeline --help
+dftidy --help
+dftidy stats    --help
+dftidy pipeline --help
 ```
 
 ### `stats` — descriptive statistics from a CSV file
@@ -86,13 +86,13 @@ dfclean pipeline --help
 
 ```bash
 # All numeric columns, pretty output
-dfclean stats data.csv
+dftidy stats data.csv
 
 # Single column
-dfclean stats data.csv -c price
+dftidy stats data.csv -c price
 
 # JSON output (pipe-friendly)
-dfclean stats data.csv -c price -o json
+dftidy stats data.csv -c price -o json
 ```
 
 **Example pretty output:**
@@ -130,8 +130,8 @@ dfclean stats data.csv -c price -o json
 | `--output` | `-o` | — | `pretty` or `json` |
 
 ```bash
-dfclean pipeline data.csv -c price
-dfclean pipeline data.csv -c price -o json
+dftidy pipeline data.csv -c price
+dftidy pipeline data.csv -c price -o json
 ```
 
 **What the pipeline does:**
@@ -145,8 +145,8 @@ dfclean pipeline data.csv -c price -o json
 ```bash
 printf 'value,label\n10,a\n20,b\n30,c\n40,d\n50,e\n' > /tmp/demo.csv
 
-dfclean stats    /tmp/demo.csv
-dfclean pipeline /tmp/demo.csv -c value -o json
+dftidy stats    /tmp/demo.csv
+dftidy pipeline /tmp/demo.csv -c value -o json
 ```
 
 ---
@@ -191,7 +191,7 @@ nox -s <name>    # run one specific session
 |---------|-------------|
 | `lint` | ruff lint + format check (read-only; safe for CI) |
 | `format` | ruff auto-format + fix violations in-place |
-| `typecheck` | mypy `--strict` over `dfclean/` |
+| `typecheck` | mypy `--strict` over `dftidy/` |
 | `tests-3.11` | pytest + coverage on Python 3.11 |
 | `tests-3.12` | pytest + coverage on Python 3.12 |
 | `tests-3.13` | pytest + coverage on Python 3.13 |
@@ -224,14 +224,14 @@ The library requires only `pandas`. `click` is never imported.
 ```python
 import pandas as pd
 
-from dfclean import (
+from dftidy import (
     describe_dataframe,
     normalise_column,
     summary_stats,
-    clean,
+    tidy,
     validate_cfg
 )
-from dfclean.main import run_pipeline
+from dftidy.main import run_pipeline
 
 df = pd.DataFrame({"price": [10, 20, 30, 40, 50], "qty": [1, 2, 3, 4, 5]})
 
@@ -242,11 +242,11 @@ print(summary_stats(df, "price"))
 print(describe_dataframe(df))
 # {'price': {...}, 'qty': {...}}
 
-normalised = normalise_column(df, "price")   # returns new DataFrame
+normalised = normalise_column(df, "price")  # returns new DataFrame
 
 # Full pipeline in one call
 result = run_pipeline(df, "price")
-print(result["stats"])      # nested dict of stats on the filtered subset
+print(result["stats"])  # nested dict of stats on the filtered subset
 ```
 
 ---
@@ -268,7 +268,7 @@ print(result["stats"])      # nested dict of stats on the filtered subset
 
 
 ##TODO's
-1. X - evaluate if normalize and stats are needed.  NO Dry it up. Also remove pipeline.  Keep clean and validate_cfg only
+1. X - evaluate if normalize and stats are needed.  NO Dry it up. Also remove pipeline.  Keep tidy and validate_cfg only
 2.  X Add links for default read_csv behavior in README
 3. Add a sample run.py to samples.    load, validate, print
 3. Decide on type's behavior. KISS.  SHould it convert strings to int? Should type convert floats to int.

@@ -1,6 +1,6 @@
-# dfclean-demo
+# dftidy-demo
 
-Minimal Poetry project demonstrating `arappaport/dfclean`.
+Minimal Poetry project demonstrating `arappaport/dftidy`.
 
 ## Setup
 
@@ -11,17 +11,17 @@ poetry install
 ## Run
 
 ```bash
-poetry run python run_dfclean.py
+poetry run python run_dftidy.py
 ```
 
 Or with a custom CSV:
 ```bash
-cp /your/path/data_cleaned_expected.csv .
-poetry run python -m dfclean_demo.main
+cp /your/path/data_tidied_expected.csv .
+poetry run python -m dftidy_demo.main
 ```
 
 ## Notes
 
-- `dfclean` is installed directly from GitHub (not on PyPI under this name).
-- `dfclean.clean()` is not in the exported public API; this project uses
-  `clean()` which is the documented entrypoint for the clean(). See `dfclean_demo/run_dfclean.py`.
+- `dftidy` is installed directly from GitHub (not on PyPI under this name).
+- `dftidy.tidy()` is not in the exported public API; this project uses
+  `tidy()` which is the documented entrypoint for the tidy(). See `dftidy_demo/run_dftidy.py`.

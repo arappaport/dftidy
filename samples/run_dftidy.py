@@ -3,16 +3,11 @@
 # See UNLICENSE or <https://unlicense.org> for details.
 
 """
-dfclean-demo: Load data_cleaned_expected.csv and run dfclean pipeline.
+dftidy-demo: Load data_sample.csv and run dftidy pipeline.
 
-dfclean public API (from arappaport/dfclean README):
-  - run_pipeline(df, column)  → {"filtered": DataFrame, "stats": dict}
-  - summary_stats(df, column) → dict of descriptive stats
-  - describe_dataframe(df)    → dict of stats per numeric column
-  - normalise_column(df, col) → DataFrame (min-max normalised)
-  - filter_above_mean(df, col)→ DataFrame (rows > mean)
+dftidy public API (from arappaport/dftidy README):
 
-NOTE: dfclean.clean() is referenced in the README overview as config-driven
+NOTE: dftidy.tidy() is referenced in the README overview as config-driven
 but is NOT exported in the public API. run_pipeline() is the canonical
 entrypoint that chains normalise → filter → stats.
 """
@@ -25,21 +20,21 @@ import logging
 import yaml
 import pandas as pd
 import json
-import dfclean
+import dftidy
 
 LOGGER = logging.getLogger(__name__)
 
 CSV_ORIG_PATH              = Path("samples/data_sample.csv")
-#PAth to where a csv of what we expect a cleaned dataframe to look at based on CSV_ORIG_PATH
-CSV_EXPECTED_CLEANED_PATH = Path("samples/data_cleaned_expected.csv")
-CSV_ACTUAL_CLEANED_PATH   = Path("samples/data_cleaned_actual.csv")  #write ti this file
+#PAth to where a csv of what we expect a tidied dataframe to look at based on CSV_ORIG_PATH
+CSV_EXPECTED_TIDIED_PATH = Path("samples/data_tidied_expected.csv")
+CSV_ACTUAL_TIDIED_PATH   = Path("samples/data_tidied_actual.csv")  #write ti this file
 
 CFG_YAML_PATH             = Path("samples/config_sample.yaml")
 
 
 def load_csv(path: Path) -> pd.DataFrame:
     """Load CSV with basic validation."""
-    msg = dfclean.check_file(path, logger=LOGGER)
+    msg = dftidy.check_file(path, logger=LOGGER)
     if msg is not None:
         LOGGER.error(msg)
         raise ValueError(msg)
@@ -127,46 +122,44 @@ def compare_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> str | None:
 
 def main() -> None:
 
-    print(f"Using dfclean version: ", dfclean.__version__)
+    print(f"Using dftidy version: ", dftidy.__version__)
 
     print(f"Loading {CSV_ORIG_PATH} ...")
     df_orig = load_csv(CSV_ORIG_PATH)
-    print(f"Pre-clean:: {df_orig.shape[0]} rows × {df_orig.shape[1]} cols\n")
+    print(f"Pre-tidy:: {df_orig.shape[0]} rows × {df_orig.shape[1]} cols\n")
 
     print(f"Loading {CFG_YAML_PATH} ...")
     cfg = load_yaml(CFG_YAML_PATH)
 
-    msg = dfclean.validate_cfg(colcfg=cfg)
+    msg = dftidy.validate_cfg(colcfg=cfg)
     if msg is not None:
         LOGGER.error(msg)
         exit(-1)
     print(json.dumps(cfg, indent=2))
 
-    df_cleaned = dfclean.clean(df_orig, cfg=cfg, inplace=False)
+    df_tidied = dftidy.tidy(df_orig, cfg=cfg, inplace=False)
 
-    print("after dfcleaned")
-    print(df_cleaned.head())
+    print("after dftidy")
+    print(df_tidied.head())
 
-    df_expected = load_csv(CSV_EXPECTED_CLEANED_PATH)
+    df_expected = load_csv(CSV_EXPECTED_TIDIED_PATH)
 
     # standard — no index, utf-8
-    df_cleaned.to_csv(CSV_ACTUAL_CLEANED_PATH, index=False)
-    print(f" wrote cleaned dataframe to [{CSV_ACTUAL_CLEANED_PATH.resolve()}]")
+    df_tidied.to_csv(CSV_ACTUAL_TIDIED_PATH, index=False)
+    print(f" wrote tidied dataframe to [{CSV_ACTUAL_TIDIED_PATH.resolve()}]")
 
-    are_eq = df_cleaned.equals(df_expected)
-    LOGGER.info("df_cleaned == df_expected: %s",are_eq)
+    are_eq = df_tidied.equals(df_expected)
+    LOGGER.info("df_tidied == df_expected: %s",are_eq)
     if are_eq:
-        LOGGER.info("cleaned dataframe equals expected.  See [%s]", Path(CSV_EXPECTED_CLEANED_PATH).resolve())
+        LOGGER.info("tidied dataframe equals expected.  See [%s]", Path(CSV_EXPECTED_TIDIED_PATH).resolve())
     else:
 
-        LOGGER.error("not equal.  Check expected file: [%s]", Path(CSV_EXPECTED_CLEANED_PATH).resolve())
-        LOGGER.error("comparing cleaned to expected- using df_orig.compare()")
-        LOGGER.error(df_cleaned.compare(df_expected))
+        LOGGER.error("not equal.  Check expected file: [%s]", Path(CSV_EXPECTED_TIDIED_PATH).resolve())
+        LOGGER.error("comparing tidied to expected- using df_orig.compare()")
+        LOGGER.error(df_tidied.compare(df_expected))
 
-        msg = compare_dataframes(df_cleaned, df_expected)
+        msg = compare_dataframes(df_tidied, df_expected)
         LOGGER.error(msg)
 
 
     dbg = 12
-if __name__ == "__main__":
-    main()
