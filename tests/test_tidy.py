@@ -283,8 +283,10 @@ class TestColumnRename:
 
     def test_rename_target_collision_raises(self, base_cfg):
         df = pd.DataFrame(
-            {"col1": ["2024-01-01"], "col2": ["2023-03-01"],
-             "col3": ["2022-11-05"], "col1-new": ["collision"]}
+            {"col1": ["2024-01-01"],
+             "col2": ["2023-03-01"],
+             "col3": ["2022-11-05"],
+             "col1-new": ["collision"]}
         )
         base_cfg["include-unmatched-columns"] = True
         with pytest.raises(ValueError, match="already exists"):
@@ -306,6 +308,29 @@ class TestColumnRename:
         }
         result = tidy(df, cfg)
         assert "col1" in result.columns
+
+    def test_rename_columns_retained_extra_removed(self, base_cfg):
+        df = pd.DataFrame(
+            {"col1": ["2024-01-01"],
+             "col2": ["2023-03-01"],
+             "col3": ["2022-11-05"],
+             "extra":["2022-12-05"]}
+        )
+
+        cfg = {
+            "version": 1.0,
+            "include-unmatched-columns": False,
+            "columns": [
+               {"col1": {"mandatory": True, "rename": "col1-new", "type": "datetime"}},
+               {"col2": {"mandatory": False,                       "type": "datetime"}},
+            ],
+            }
+        result = tidy(df, cfg)
+        assert "col1" not in result.columns
+        assert "col1-new" in result.columns
+        assert "col2"     in result.columns
+        assert "col3" not in result.columns
+        assert "extra" not in result.columns
 
 
 # ---------------------------------------------------------------------------
