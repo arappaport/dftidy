@@ -6,17 +6,17 @@ target_function_name: "process_removes"
 
 Write a production-grade Python function named {{target_function_name}} that accepts:
 1. a pandas dataframe named df.  It should not be empty.
-2. a dict named df_config. It should not be empty. It should have the a key named remove
+2. a dict named df_config. It should not be empty. It should have the a key named columns-remove
 3. a bool inplace.    standard dataframe behavior. if True modifies existing df. If False process a copy. Defaults to False
 3. return a dataframe named df_tidy. that contains results after tidying.
 
 
 
 The function should:
-- df_config.get('remove') contains a list of column names to remove from the df.
-- df_config.get('remove') is optional.    It may not exist in df_config.   it may be empty.  All values musty be strings.
-- Remove any column in df that matches a value in the list from df_config.get('remove')
-- it is NOT an error if a value df_config.get('remove') does not match a column in df
+- df_config.get('columns-remove') contains a list of column names to remove from the df.
+- df_config.get('columns-remove') is optional.    It may not exist in df_config.   it may be empty.  All values musty be strings.
+- Remove any column in df that matches a value in the list from df_config.get('columns-remove')
+- it is NOT an error if a value df_config.get('columns-remove') does not match a column in df
 - error handling. Any issues should result in raised exceptions with suitable error strings
 
 Generate comprehensive pytests for all negative and positive cases suitable for a file named test_{{target_function_name}}.py

@@ -12,7 +12,7 @@ It returns None if colcfg is valid or a str error message if not.
 A properly formatted colcfg dict:
 1. must not be an empty dict
 2. may have a value named include-unmatched-columns that may be blank or a bool.
-2. may have a value named remove. remove must be a list of strings.
+2. may have a value named columns-remove. columns-remove must be a list of strings.
 3. may have a value named columns. columns must be a list of dicts
 4. each dict inside columns may have keys named: mandatory, rename or type.
 

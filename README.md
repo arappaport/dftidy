@@ -65,6 +65,38 @@ pre-commit install
 
 ---
 
+## Quick demo
+
+Run the sample script from the **repository root** after cloning and installing:
+
+```bash
+git clone https://github.com/arappaport/dftidy.git
+cd dftidy
+poetry install --with dev
+
+poetry run python samples/run_dftidy.py
+```
+
+The script:
+1. Loads `samples/data_sample.csv` (9 columns including `DOB` and `SSN`)
+2. Validates `samples/config_sample.yaml`
+3. Calls `dftidy.tidy()` — drops `DOB`/`SSN`, coerces date columns to ISO-8601, renames, and lowercases all column names
+4. Prints the tidied DataFrame (7 columns, 5 rows)
+5. Writes the result to `samples/data_tidied_actual.csv` and compares it against `samples/data_tidied_expected.csv`
+
+Expected output (abbreviated):
+
+```
+Pre-tidy:: 5 rows × 9 cols
+after dftidy
+   id           name  ...     date-deleted         date-audited
+0   1  Alice Hartman  ...              NaN  2021-01-07T11:20:00
+...
+INFO: tidied dataframe equals expected.
+```
+
+---
+
 ## CLI usage
 
 The `dftidy` command is available after `poetry install --with dev`.

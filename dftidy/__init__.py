@@ -12,7 +12,7 @@ from dftidy.process_removes import process_removes
 from dftidy.validate_cfg import validate_cfg
 from dftidy.util import check_file
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 __all__ = [
     "__version__",

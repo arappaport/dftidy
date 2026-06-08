@@ -43,7 +43,7 @@ def simple_df() -> pd.DataFrame:
 
 @pytest.fixture
 def base_config() -> dict:
-    return {"remove": ["a", "b"]}
+    return {"columns-remove": ["a", "b"]}
 
 
 # ---------------------------------------------------------------------------
@@ -82,7 +82,7 @@ class TestValidateDataframe:
 
 class TestValidateDfConfig:
     def test_valid_config_passes(self):
-        _validate_df_config({"remove": ["a"]})
+        _validate_df_config({"columns-remove": ["a"]})
 
     def test_not_a_dict_raises_type_error(self):
         with pytest.raises(TypeError, match="dictionary"):
@@ -97,7 +97,7 @@ class TestValidateDfConfig:
             _validate_df_config({})
 
     def test_config_without_remove_key_passes(self):
-        """Keys other than 'remove' are valid; missing 'remove' is fine."""
+        """Keys other than 'columns-remove' are valid; missing 'columns-remove' is fine."""
         _validate_df_config({"keep": ["x"]})
 
 
@@ -134,7 +134,7 @@ class TestValidateInplace:
 
 class TestGetColumnsToRemove:
     def test_returns_list_when_remove_key_present(self):
-        result = _get_columns_to_remove({"remove": ["a", "b"]})
+        result = _get_columns_to_remove({"columns-remove": ["a", "b"]})
         assert result == ["a", "b"]
 
     def test_returns_empty_list_when_remove_key_missing(self):
@@ -142,24 +142,24 @@ class TestGetColumnsToRemove:
         assert result == []
 
     def test_returns_empty_list_when_remove_is_none(self):
-        result = _get_columns_to_remove({"remove": None})
+        result = _get_columns_to_remove({"columns-remove": None})
         assert result == []
 
     def test_returns_empty_list_for_empty_remove_list(self):
-        result = _get_columns_to_remove({"remove": []})
+        result = _get_columns_to_remove({"columns-remove": []})
         assert result == []
 
     def test_raises_type_error_when_remove_not_a_list(self):
         with pytest.raises(TypeError, match="list of strings"):
-            _get_columns_to_remove({"remove": "a"})
+            _get_columns_to_remove({"columns-remove": "a"})
 
     def test_raises_type_error_when_remove_contains_non_strings(self):
         with pytest.raises(TypeError, match="strings"):
-            _get_columns_to_remove({"remove": ["a", 42]})
+            _get_columns_to_remove({"columns-remove": ["a", 42]})
 
     def test_raises_type_error_when_remove_is_tuple(self):
         with pytest.raises(TypeError):
-            _get_columns_to_remove({"remove": ("a", "b")})
+            _get_columns_to_remove({"columns-remove": ("a", "b")})
 
 
 # ---------------------------------------------------------------------------
@@ -230,11 +230,11 @@ class TestProcessRemoves:
         assert result is not simple_df
 
     def test_remove_nonexistent_columns_no_error(self, simple_df):
-        result = process_removes(simple_df, {"remove": ["x", "y"]}, inplace=False)
+        result = process_removes(simple_df, {"columns-remove": ["x", "y"]}, inplace=False)
         assert set(result.columns) == {"a", "b", "c"}
 
     def test_remove_empty_list(self, simple_df):
-        result = process_removes(simple_df, {"remove": []}, inplace=False)
+        result = process_removes(simple_df, {"columns-remove": []}, inplace=False)
         assert list(result.columns) == list(simple_df.columns)
 
     def test_default_inplace_is_false(self, simple_df, base_config):
@@ -243,26 +243,26 @@ class TestProcessRemoves:
         assert "a" in simple_df.columns  # original unmodified
 
     def test_config_with_extra_keys(self, simple_df):
-        config = {"remove": ["a"], "dtype": "float32", "fillna": 0}
+        config = {"columns-remove": ["a"], "dtype": "float32", "fillna": 0}
         result = process_removes(simple_df, config)
         assert "a" not in result.columns
         assert "b" in result.columns
 
     def test_single_row_dataframe(self):
         df = pd.DataFrame({"x": [1], "y": [2]})
-        result = process_removes(df, {"remove": ["x"]})
+        result = process_removes(df, {"columns-remove": ["x"]})
         assert list(result.columns) == ["y"]
 
     def test_wide_dataframe_removes_subset(self):
         cols = [f"col_{i}" for i in range(50)]
         df = pd.DataFrame({c: [1] for c in cols})
         to_remove = cols[:10]
-        result = process_removes(df, {"remove": to_remove})
+        result = process_removes(df, {"columns-remove": to_remove})
         assert len(result.columns) == 40
         assert not any(c in result.columns for c in to_remove)
 
     def test_column_order_preserved(self, simple_df):
-        result = process_removes(simple_df, {"remove": ["b"]})
+        result = process_removes(simple_df, {"columns-remove": ["b"]})
         assert list(result.columns) == ["a", "c"]
 
     def test_returns_dataframe_type(self, simple_df, base_config):
@@ -293,25 +293,25 @@ class TestProcessRemoves:
 
     def test_raises_type_error_when_remove_contains_int(self, simple_df):
         with pytest.raises(TypeError):
-            process_removes(simple_df, {"remove": [1, 2]})
+            process_removes(simple_df, {"columns-remove": [1, 2]})
 
     def test_raises_type_error_when_remove_is_string_not_list(self, simple_df):
         with pytest.raises(TypeError):
-            process_removes(simple_df, {"remove": "a"})
+            process_removes(simple_df, {"columns-remove": "a"})
 
     # --- data integrity ---
 
     def test_values_unchanged_after_remove(self, simple_df):
-        result = process_removes(simple_df, {"remove": ["a"]})
+        result = process_removes(simple_df, {"columns-remove": ["a"]})
         assert result["b"].tolist() == [3, 4]
         assert result["c"].tolist() == [5, 6]
 
     def test_index_preserved(self):
         df = pd.DataFrame({"a": [10, 20], "b": [30, 40]}, index=[5, 10])
-        result = process_removes(df, {"remove": ["a"]})
+        result = process_removes(df, {"columns-remove": ["a"]})
         assert list(result.index) == [5, 10]
 
     def test_dtypes_preserved(self):
         df = pd.DataFrame({"a": pd.array([1], dtype="int32"), "b": ["x"]})
-        result = process_removes(df, {"remove": ["a"]})
+        result = process_removes(df, {"columns-remove": ["a"]})
         assert result["b"].dtype == object

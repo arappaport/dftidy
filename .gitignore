@@ -36,6 +36,9 @@ coverage.xml
 .DS_Store
 *.swp
 
+# Demo output written by samples/run_dftidy.py
+samples/data_tidied_actual.csv
+
 # NOTE: poetry.lock is intentionally NOT listed here.
 # Commit the lockfile for reproducible installs in CI and contributor onboarding.
 # Library consumers manage their own dependency resolution independently.

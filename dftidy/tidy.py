@@ -25,6 +25,8 @@ from typing import Optional
 
 import pandas as pd
 
+from dftidy.process_removes import process_removes
+
 log = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -299,15 +301,19 @@ def tidy(
     2. Validates samples version (only ``1.0`` supported).
     3. Reads ``include-unmatched-columns`` (defaults to ``False``).
     4. Parses ordered column definitions from ``cfg["columns"]``.
-    5. For each defined column:
+    5. Removes columns listed under ``cfg["columns-remove"]`` via
+       :func:`process_removes` — the first step to mutate the frame, so any
+       sensitive columns are dropped before further processing. Skipped for an
+       empty frame.
+    6. For each defined column:
 
        a. Checks presence; raises ``KeyError`` if mandatory and absent.
        b. Coerces the column type when ``type`` is specified.
        c. Collects renames for atomic application after the loop.
 
-    6. Applies all renames in a single ``DataFrame.rename()`` call.
-    7. Reorders output columns to match the samples order.
-    8. Drops or retains unmatched columns per ``include-unmatched-columns``.
+    7. Applies all renames in a single ``DataFrame.rename()`` call.
+    8. Reorders output columns to match the samples order.
+    9. Drops or retains unmatched columns per ``include-unmatched-columns``.
 
     Args:
         df: Source pandas DataFrame to tidy.
@@ -341,6 +347,7 @@ def tidy(
         result = tidy(df, cfg)
         # result has columns: col1-new (datetime64), col2-new (datetime64),
         #                      col3-new (YYYY-MM-DD string)
+        :rtype: Optional[pd.DataFrame]
     """
     # ------------------------------------------------------------------
     # 1. Argument type validation
@@ -376,6 +383,15 @@ def tidy(
     # 3. Work on a copy unless inplace
     # ------------------------------------------------------------------
     target: pd.DataFrame = df if inplace else df.copy()
+
+    # ------------------------------------------------------------------
+    # 3a. Column removal — the first action that mutates the frame.
+    #     Drops columns listed under 'columns-remove' (e.g. PII) before any
+    #     other tidy step touches the data. Skipped for an empty frame, which
+    #     process_removes rejects and which has nothing to remove anyway.
+    # ------------------------------------------------------------------
+    if not target.empty:
+        target = process_removes(target, cfg, inplace=True)
 
     # ------------------------------------------------------------------
     # 4. Per-column: mandatory → coerce → collect rename

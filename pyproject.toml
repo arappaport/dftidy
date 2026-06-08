@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dftidy"
-version = "0.1.2"
+version = "0.1.3"
 description = "Prepare a dataframe for ananlysis by renaming, removing and reordering columns"
 authors = ["Andy Rappaport andy@rappaport.name"]
 license = "Unlicense"

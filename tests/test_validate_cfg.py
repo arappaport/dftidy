@@ -66,7 +66,7 @@ class TestMinimalValidConfigs:
     """Any non-empty dict with recognised keys in valid state → None."""
 
     def test_only_remove_valid(self):
-        assert is_valid(validate_cfg({"remove": ["col_a", "col_b"]}))
+        assert is_valid(validate_cfg({"columns-remove": ["col_a", "col_b"]}))
 
     def test_only_columns_valid(self):
         cfg = {"columns": [{"mandatory": True, "rename": "new_name", "type": "int"}]}
@@ -113,15 +113,15 @@ class TestIncludeUnmatchedColumns:
     def test_early_return_skips_remove_validation(self):
         """
         KNOWN BEHAVIOUR: when include-unmatched-columns is present and valid,
-        validate_cfg returns None immediately — invalid 'remove' is NOT caught.
+        validate_cfg returns None immediately — invalid 'columns-remove' is NOT caught.
         This test documents the current behaviour; update if the bug is fixed.
         """
         cfg = {
             "include-unmatched-columns": True,
-            "remove": "not-a-list",   # would normally be an error
+            "columns-remove": "not-a-list",   # would normally be an error
         }
         result = validate_cfg(cfg)
-        # Current behaviour: early return → None (no error raised for 'remove')
+        # Current behaviour: early return → None (no error raised for 'columns-remove')
         assert is_valid(result)
 
     def test_early_return_skips_columns_validation(self):
@@ -137,20 +137,20 @@ class TestIncludeUnmatchedColumns:
 
 
 # ===========================================================================
-# remove
+# columns-remove
 # ===========================================================================
 
 class TestRemoveField:
 
     def test_valid_list_of_strings(self):
-        assert is_valid(validate_cfg({"remove": ["a", "b", "c"]}))
+        assert is_valid(validate_cfg({"columns-remove": ["a", "b", "c"]}))
 
     def test_empty_list_is_valid(self):
         # No constraint on minimum length
-        assert is_valid(validate_cfg({"remove": []}))
+        assert is_valid(validate_cfg({"columns-remove": []}))
 
     def test_single_string_element(self):
-        assert is_valid(validate_cfg({"remove": ["only_one"]}))
+        assert is_valid(validate_cfg({"columns-remove": ["only_one"]}))
 
     @pytest.mark.parametrize("bad_remove", [
         "a_string",
@@ -160,7 +160,7 @@ class TestRemoveField:
         ("a", "b"),
     ])
     def test_non_list_returns_error(self, bad_remove):
-        result = validate_cfg({"remove": bad_remove})
+        result = validate_cfg({"columns-remove": bad_remove})
         assert is_error(result)
         assert "remove" in result.lower()
 
@@ -172,7 +172,7 @@ class TestRemoveField:
         [{"dict": "item"}],
     ])
     def test_non_string_elements_return_error(self, bad_elements):
-        result = validate_cfg({"remove": bad_elements})
+        result = validate_cfg({"columns-remove": bad_elements})
         assert is_error(result)
         assert "remove" in result.lower()
 
@@ -296,14 +296,14 @@ class TestFieldCombinations:
 
     def test_remove_and_columns_both_valid(self):
         cfg = {
-            "remove": ["drop_me"],
+            "columns-remove": ["drop_me"],
             "columns": [{"mandatory": True, "rename": "kept"}],
         }
         assert is_valid(validate_cfg(cfg))
 
     def test_valid_remove_invalid_columns(self):
         cfg = {
-            "remove": ["drop_me"],
+            "columns-remove": ["drop_me"],
             "columns": "not-a-list",
         }
         result = validate_cfg(cfg)
@@ -311,7 +311,7 @@ class TestFieldCombinations:
 
     def test_invalid_remove_valid_columns(self):
         cfg = {
-            "remove": 999,
+            "columns-remove": 999,
             "columns": [{"mandatory": True}],
         }
         result = validate_cfg(cfg)
@@ -321,7 +321,7 @@ class TestFieldCombinations:
     def test_invalid_remove_invalid_columns_remove_checked_first(self):
         """remove is checked before columns in source order."""
         cfg = {
-            "remove": "bad",
+            "columns-remove": "bad",
             "columns": "also-bad",
         }
         result = validate_cfg(cfg)
@@ -330,7 +330,7 @@ class TestFieldCombinations:
 
     def test_unknown_key_alongside_valid_fields(self):
         cfg = {
-            "remove": ["x"],
+            "columns-remove": ["x"],
             "columns": [{"type": "int"}],
             "unrecognised": True,
         }

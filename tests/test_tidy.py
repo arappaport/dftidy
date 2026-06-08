@@ -646,3 +646,67 @@ class TestEdgeCases:
         result = tidy(df, cfg)
         assert "col1" in result.columns
         assert result["col1"].iloc[0] == "hello"
+
+
+# ---------------------------------------------------------------------------
+# columns-remove integration (process_removes wired into tidy)
+# ---------------------------------------------------------------------------
+
+
+class TestColumnsRemove:
+    """tidy() drops 'columns-remove' columns before any other processing."""
+
+    def test_removes_listed_columns(self):
+        df = pd.DataFrame({"keep": [1, 2], "ssn": ["x", "y"], "dob": ["a", "b"]})
+        cfg = {
+            "version": 1.0, "include-unmatched-columns": True,
+            "columns-remove": ["ssn", "dob"],
+        }
+        result = tidy(df, cfg)
+        assert list(result.columns) == ["keep"]
+
+    def test_missing_remove_target_is_not_an_error(self):
+        df = pd.DataFrame({"keep": [1, 2]})
+        cfg = {
+            "version": 1.0, "include-unmatched-columns": True,
+            "columns-remove": ["not-present"],
+        }
+        result = tidy(df, cfg)
+        assert list(result.columns) == ["keep"]
+
+    def test_remove_runs_before_rename(self):
+        """A removed column can never be renamed/coerced — it's gone first."""
+        df = pd.DataFrame({"ssn": ["x"], "col1": ["2024-01-01"]})
+        cfg = {
+            "version": 1.0, "include-unmatched-columns": False,
+            "columns-remove": ["ssn"],
+            "columns": [{"col1": {"mandatory": True, "rename": "col1-new"}}],
+        }
+        result = tidy(df, cfg)
+        assert list(result.columns) == ["col1-new"]
+
+    def test_removing_mandatory_column_then_required_raises(self):
+        """Removal happens first, so a removed-then-mandatory column is missing."""
+        df = pd.DataFrame({"ssn": ["x"], "col1": ["2024-01-01"]})
+        cfg = {
+            "version": 1.0, "include-unmatched-columns": False,
+            "columns-remove": ["ssn"],
+            "columns": [{"ssn": {"mandatory": True}}],
+        }
+        with pytest.raises(KeyError, match="ssn"):
+            tidy(df, cfg)
+
+    def test_no_columns_remove_key_is_noop(self, base_df, base_cfg):
+        """Configs without 'columns-remove' behave exactly as before."""
+        result = tidy(base_df, base_cfg)
+        assert list(result.columns) == ["col1-new", "col2-new", "col3-new"]
+
+    def test_inplace_removal_mutates_original(self):
+        df = pd.DataFrame({"keep": [1, 2], "ssn": ["x", "y"]})
+        cfg = {
+            "version": 1.0, "include-unmatched-columns": True,
+            "columns-remove": ["ssn"],
+        }
+        tidy(df, cfg, inplace=True)
+        assert "ssn" not in df.columns
+        assert "keep" in df.columns

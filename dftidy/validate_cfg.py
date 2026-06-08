@@ -61,13 +61,13 @@ def validate_cfg(colcfg: Dict[str, Any]) -> Optional[str]:
         return "include-unmatched-columns must be blank or a boolean."
 
 
-    # remove
-    if "remove" in colcfg:
-        val = colcfg.get("remove")
+    # columns-remove
+    if "columns-remove" in colcfg:
+        val = colcfg.get("columns-remove")
         if not isinstance(val, list):
-            return "remove must be a list of strings."
+            return "columns-remove must be a list of strings."
         if not all(isinstance(item, str) for item in val):
-            return "remove must contain only strings."
+            return "columns-remove must contain only strings."
 
     # columns
     if "columns" in colcfg:

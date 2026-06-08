@@ -71,18 +71,18 @@ def _get_columns_to_remove(df_config: Dict[str, Any]) -> List[str]:
         A list of column names to remove. May be empty list.
 
     Raises:
-        TypeError: If the 'remove' value is not a list of strings.
+        TypeError: If the 'columns-remove' value is not a list of strings.
     """
-    remove_value: Optional[Any] = df_config.get("remove")
+    remove_value: Optional[Any] = df_config.get("columns-remove")
 
     if remove_value is None:
         return []
 
     if not isinstance(remove_value, list):
-        raise TypeError("df_config['remove'] must be a list of strings.")
+        raise TypeError("df_config['columns-remove'] must be a list of strings.")
 
     if not all(isinstance(col, str) for col in remove_value):
-        raise TypeError("All values in df_config['remove'] must be strings.")
+        raise TypeError("All values in df_config['columns-remove'] must be strings.")
 
     return remove_value
 
@@ -122,7 +122,7 @@ def process_removes(
 ) -> pd.DataFrame:
     """Remove columns from a DataFrame based on a configuration dictionary.
 
-    The function reads the optional ``"remove"`` key from ``df_config``.
+    The function reads the optional ``"columns-remove"`` key from ``df_config``.
     If present, it must be a list of strings representing column names.
     Any column in ``df`` whose name matches a value in this list is removed.
     It is not an error if a name in the list does not exist in ``df``.
@@ -130,7 +130,7 @@ def process_removes(
     Args:
         df: The input pandas DataFrame. Must not be empty.
         df_config: Configuration dictionary. May optionally contain a
-            ``"remove"`` key with a list of column names to remove.
+            ``"columns-remove"`` key with a list of column names to remove.
         inplace: If True, modify ``df`` in place and return it.
             If False, operate on a copy and return the new DataFrame.
 
