@@ -97,92 +97,6 @@ INFO: tidied dataframe equals expected.
 
 ---
 
-## CLI usage
-
-The `dftidy` command is available after `poetry install --with dev`.
-
-### Help
-
-```bash
-dftidy --help
-dftidy stats    --help
-dftidy pipeline --help
-```
-
-### `stats` — descriptive statistics from a CSV file
-
-| Flag | Short | Default | Description |
-|------|-------|---------|-------------|
-| `--column` | `-c` | all numeric cols | Column to analyse |
-| `--output` | `-o` | `pretty` | `pretty` or `json` |
-
-```bash
-# All numeric columns, pretty output
-dftidy stats data.csv
-
-# Single column
-dftidy stats data.csv -c price
-
-# JSON output (pipe-friendly)
-dftidy stats data.csv -c price -o json
-```
-
-**Example pretty output:**
-
-```
-── value ──
-  mean    : 30.0000
-  median  : 30.0000
-  std     : 15.8114
-  min     : 10.0000
-  max     : 50.0000
-  count   : 5.0000
-```
-
-**Example JSON output:**
-
-```json
-{
-  "value": {
-    "mean": 30.0,
-    "median": 30.0,
-    "std": 15.811388300841896,
-    "min": 10.0,
-    "max": 50.0,
-    "count": 5.0
-  }
-}
-```
-
-### `pipeline` — normalise → filter → stats
-
-| Flag | Short | Required | Description |
-|------|-------|----------|-------------|
-| `--column` | `-c` | ✓ | Numeric column to process |
-| `--output` | `-o` | — | `pretty` or `json` |
-
-```bash
-dftidy pipeline data.csv -c price
-dftidy pipeline data.csv -c price -o json
-```
-
-**What the pipeline does:**
-
-1. Min-max normalises `--column` to [0, 1].
-2. Retains only rows where the normalised value is strictly above the mean.
-3. Returns descriptive stats on the retained subset.
-
-### Quick demo
-
-```bash
-printf 'value,label\n10,a\n20,b\n30,c\n40,d\n50,e\n' > /tmp/demo.csv
-
-dftidy stats    /tmp/demo.csv
-dftidy pipeline /tmp/demo.csv -c value -o json
-```
-
----
-
 ## Running tests
 
 ### Full suite with coverage report
@@ -224,8 +138,6 @@ nox -s <name>    # run one specific session
 | `lint` | ruff lint + format check (read-only; safe for CI) |
 | `format` | ruff auto-format + fix violations in-place |
 | `typecheck` | mypy `--strict` over `dftidy/` |
-| `tests-3.11` | pytest + coverage on Python 3.11 |
-| `tests-3.12` | pytest + coverage on Python 3.12 |
 | `tests-3.13` | pytest + coverage on Python 3.13 |
 | `safety` | pip-audit CVE scan on runtime deps only |
 | `ci` | lint + typecheck + tests-3.13 (fast PR gate) |
@@ -243,7 +155,7 @@ nox -s tests-3.13 -- -k "zero_variance" -v
 ### Full Python version matrix
 
 ```bash
-nox -s tests     # runs 3.11, 3.12, 3.13 sequentially
+nox -s tests     # runs 3.13 sequentially
 ```
 
 
@@ -257,9 +169,6 @@ The library requires only `pandas`. `click` is never imported.
 import pandas as pd
 
 from dftidy import (
-    describe_dataframe,
-    normalise_column,
-    summary_stats,
     tidy,
     validate_cfg
 )

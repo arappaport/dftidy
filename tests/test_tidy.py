@@ -95,18 +95,6 @@ class TestInputTypeValidation:
         with pytest.raises(TypeError, match="'cfg' must be a dict"):
             tidy(df=base_df, cfg=[{"version": 1.0}])
 
-    def test_inplace_string_raises(self, base_df, base_cfg):
-        with pytest.raises(TypeError, match="'inplace' must be a bool"):
-            tidy(df=base_df, cfg=base_cfg, inplace="true")
-
-    def test_inplace_int_raises(self, base_df, base_cfg):
-        with pytest.raises(TypeError, match="'inplace' must be a bool"):
-            tidy(df=base_df, cfg=base_cfg, inplace=1)
-
-    def test_inplace_none_raises(self, base_df, base_cfg):
-        with pytest.raises(TypeError, match="'inplace' must be a bool"):
-            tidy(df=base_df, cfg=base_cfg, inplace=None)
-
 
 # ---------------------------------------------------------------------------
 # 2. Version validation
@@ -512,27 +500,24 @@ class TestColumnOrdering:
 
 
 class TestInplaceBehaviour:
-    """inplace=False returns a copy; inplace=True mutates df and returns None."""
+    """tidy() always returns a copy; the original DataFrame is never modified."""
 
-    def test_inplace_false_returns_dataframe(self, base_df, base_cfg):
-        result = tidy(base_df, base_cfg, inplace=False)
+    def test_returns_dataframe(self, base_df, base_cfg):
+        result = tidy(base_df, base_cfg)
         assert isinstance(result, pd.DataFrame)
 
-    def test_inplace_false_original_columns_unchanged(self, base_df, base_cfg):
+    def test_original_columns_unchanged(self, base_df, base_cfg):
         original_cols = list(base_df.columns)
-        tidy(base_df, base_cfg, inplace=False)
+        tidy(base_df, base_cfg)
         assert list(base_df.columns) == original_cols
 
-    def test_inplace_true_returns_none(self, base_df, base_cfg):
-        assert tidy(base_df, base_cfg, inplace=True) is None
+    def test_original_values_unchanged(self, base_df, base_cfg):
+        original_vals = base_df["col1"].tolist()
+        tidy(base_df, base_cfg)
+        assert base_df["col1"].tolist() == original_vals
 
-    def test_inplace_true_mutates_df(self, base_df, base_cfg):
-        tidy(base_df, base_cfg, inplace=True)
-        assert "col1-new" in base_df.columns
-        assert "col1" not in base_df.columns
-
-    def test_inplace_false_result_independent_of_original(self, base_df, base_cfg):
-        result = tidy(base_df, base_cfg, inplace=False)
+    def test_result_independent_of_original(self, base_df, base_cfg):
+        result = tidy(base_df, base_cfg)
         result["col1-new"] = "MODIFIED"
         assert "col1-new" not in base_df.columns
 

@@ -292,14 +292,16 @@ def tidy(
     df: pd.DataFrame,
     cfg: dict,
     inplace: bool = False,
-) -> Optional[pd.DataFrame]:
+) -> pd.DataFrame:
     """Tidy and validate a pandas DataFrame using a dftidy YAML samples.
+
+    Operates on a copy of *df* unless *inplace* is ``True``.
 
     Operations performed in order:
 
-    1. Type-validates all three arguments.
+    1. Type-validates both arguments.
     2. Validates samples version (only ``1.0`` supported).
-    3. Reads ``include-unmatched-columns`` (defaults to ``False``).
+    3. Reads ``include-unmatched-columns`` (defaults to ``True``).
     4. Parses ordered column definitions from ``cfg["columns"]``.
     5. Removes columns listed under ``cfg["columns-remove"]`` via
        :func:`process_removes` — the first step to mutate the frame, so any
@@ -319,12 +321,11 @@ def tidy(
         df: Source pandas DataFrame to tidy.
         cfg: Python dict produced by ``yaml.safe_load()`` on a dftidy
             samples file.
-        inplace: If ``True``, mutate *df* in place and return ``None``.
-            If ``False`` (default), operate on a copy and return it.
+        inplace: If ``True``, mutate *df* in place and return it.
+            If ``False`` (default), operate on a copy and leave *df* unchanged.
 
     Returns:
-        Tidied ``pd.DataFrame`` when ``inplace=False``, or ``None`` when
-        ``inplace=True``.
+        Tidied DataFrame (same object as *df* when *inplace* is ``True``).
 
     Raises:
         TypeError: If *df* is not a ``pd.DataFrame``, *cfg* is not a ``dict``,
@@ -335,11 +336,13 @@ def tidy(
 
     Example::
 
-        import yaml, pandas as pd
+        import yaml
+        import pandas as pd
         from tidy import tidy
 
-        cfg = yaml.safe_load(open("sample.yaml"))
-        df  = pd.DataFrame({
+        with open("sample.yaml") as fh:
+            cfg = yaml.safe_load(fh)
+        df = pd.DataFrame({
             "col1": ["2024-01-01"],
             "col2": ["2023-06-15"],
             "col3": ["2022-03-10"],
@@ -380,9 +383,9 @@ def tidy(
     )
 
     # ------------------------------------------------------------------
-    # 3. Work on a copy unless inplace
+    # 3. Work on a copy
     # ------------------------------------------------------------------
-    target: pd.DataFrame = df if inplace else df.copy()
+    target: pd.DataFrame = df.copy()
 
     # ------------------------------------------------------------------
     # 3a. Column removal — the first action that mutates the frame.
@@ -484,6 +487,6 @@ def tidy(
     # 7. Return
     # ------------------------------------------------------------------
     if inplace:
-        df.__dict__.update(target.__dict__)
-        return None
+        df._update_inplace(target)
+        return df
     return target
